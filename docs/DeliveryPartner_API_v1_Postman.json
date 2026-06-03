@@ -1,0 +1,121 @@
+{
+    "info": {
+        "name": "DeliveryPartner.lk External API v1",
+        "description": "REST API for third-party parcel creation in the DeliveryPartner.lk courier management system.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "https://dp.ezycloud.xyz/api/v1",
+            "type": "string"
+        },
+        {
+            "key": "api_key",
+            "value": "YOUR_API_KEY_HERE",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Create Parcel",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{api_key}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"invoice_id\": \"INV-10025\",\n    \"sender_name\": \"ABC Online Store\",\n    \"sender_phone\": \"0771234567\",\n    \"sender_address\": \"123 Main Street, Colombo 03\",\n    \"receiver_name\": \"John Perera\",\n    \"receiver_phone\": \"0769876543\",\n    \"receiver_address\": \"456 Temple Road, Kandy\",\n    \"city\": \"Kandy\",\n    \"district\": \"Kandy\",\n    \"parcel_description\": \"Electronics - Mobile Phone\",\n    \"weight\": 0.5,\n    \"cod_amount\": 25000.00,\n    \"delivery_charge\": 350.00,\n    \"remarks\": \"Handle with care, fragile item\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/parcels/create",
+                    "host": ["{{base_url}}"],
+                    "path": ["parcels", "create"]
+                },
+                "description": "Create a new parcel in the DeliveryPartner.lk system. Returns the generated tracking ID."
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "{{base_url}}/parcels/create",
+                            "host": ["{{base_url}}"],
+                            "path": ["parcels", "create"]
+                        }
+                    },
+                    "status": "Created",
+                    "code": 201,
+                    "body": "{\n    \"success\": true,\n    \"message\": \"Parcel created successfully\",\n    \"data\": {\n        \"tracking_id\": \"DP10KAN589\",\n        \"invoice_id\": \"INV-10025\",\n        \"status\": \"Created\"\n    }\n}"
+                },
+                {
+                    "name": "Validation Error",
+                    "status": "Unprocessable Entity",
+                    "code": 422,
+                    "body": "{\n    \"success\": false,\n    \"message\": \"Validation failed\",\n    \"errors\": {\n        \"receiver_phone\": [\n            \"Receiver phone number is required\"\n        ]\n    }\n}"
+                },
+                {
+                    "name": "Unauthorized",
+                    "status": "Unauthorized",
+                    "code": 401,
+                    "body": "{\n    \"success\": false,\n    \"message\": \"Invalid or missing API key\"\n}"
+                },
+                {
+                    "name": "Duplicate Invoice",
+                    "status": "Conflict",
+                    "code": 409,
+                    "body": "{\n    \"success\": false,\n    \"message\": \"A parcel with this Invoice ID already exists\",\n    \"data\": {\n        \"tracking_id\": \"DP10KAN589\",\n        \"invoice_id\": \"INV-10025\",\n        \"status\": \"Pending\"\n    }\n}"
+                }
+            ]
+        },
+        {
+            "name": "Create Parcel - Minimal Fields",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{api_key}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"invoice_id\": \"ORD-5001\",\n    \"sender_name\": \"My Shop\",\n    \"sender_phone\": \"0771234567\",\n    \"sender_address\": \"Colombo 07\",\n    \"receiver_name\": \"Saman Silva\",\n    \"receiver_phone\": \"0761112233\",\n    \"receiver_address\": \"Galle Road, Galle\",\n    \"city\": \"Galle\",\n    \"district\": \"Galle\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/parcels/create",
+                    "host": ["{{base_url}}"],
+                    "path": ["parcels", "create"]
+                },
+                "description": "Create a parcel with only required fields (no COD, no weight, no remarks)."
+            }
+        }
+    ]
+}
